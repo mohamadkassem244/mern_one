@@ -1,0 +1,39 @@
+h1{
+    text-align: center;
+    margin: 1rem 0;
+    color: #EEEEEE;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 800px;
+    margin: 0 auto;
+    gap: 0.8rem;
+    & input {
+        padding: 1rem;
+        border: none;
+        outline: none;
+        border-radius: 1rem;
+        width: 700px;
+        border: 2px solid #323232;
+        background-color: #495E57;
+        color: #EEEEEE;
+        &:focus {
+          border: none;
+          outline: none;
+          border: 2px solid #EEEEEE;
+        }
+        &::placeholder{
+          color: #EEEEEE;
+        }
+        &[type="submit"]{
+          background-color: #059212;
+          color: #EEEEEE;
+          font-size: 1.3rem;
+          text-transform: uppercase;
+        }
+    }
+}

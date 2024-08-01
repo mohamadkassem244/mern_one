@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const User = require('./Models/User');
@@ -10,6 +11,7 @@ const _MONGO_URI = process.env.MONGO_URI;
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 mongoose.connect(_MONGO_URI)
   .then(() => console.log('Connected to MongoDB Successfully'))
@@ -62,7 +64,7 @@ app.get("/users/:id", async (req, res) => {
 
 app.post("/users", async (req, res) => {
   const { first_name, last_name, username, email, password, birth_date } = req.body;
-  if (!first_name || !last_name || !username || !email || !password || !birth_date) {
+  if (!first_name || !last_name || !username || !email || !password) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
   try {
@@ -71,6 +73,30 @@ app.post("/users", async (req, res) => {
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create user' , err});
+  }
+});
+
+app.put("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const { first_name, last_name, username, email, password, birth_date } = req.body;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid user ID' });
+  }
+  if (!first_name || !last_name || !username || !email || !password) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { first_name, last_name, username, email, password, birth_date },
+      { new: true, runValidators: true }
+    );
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update user', err });
   }
 });
 
